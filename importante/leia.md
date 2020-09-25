@@ -1,0 +1,1 @@
+Essa pasta é somente para guardar alguns arquivos, totalmente exta-projeto
