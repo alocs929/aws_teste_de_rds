@@ -7,9 +7,9 @@ const app = express();
 
 app.use(express.json());
 
-async function reestartTables (){
+function reestartTables (){
   
-   connection.connect(function(err) {
+  connection.connect(function(err) {
     if (err) {
       console.error(`Database connection failed:${err.stack}`);
       return console.log("erro na conexão");
@@ -28,7 +28,7 @@ async function reestartTables (){
 
 function createDB (){
 
-  connection.query("CREATE SCHEMA IF NOT EXISTS `todolist` DEFAULT CHARACTER SET utf8", "USE `todolist`", function (err, result) {
+  connection.query("CREATE DATABASE IF NOT EXISTS `todolist` DEFAULT CHARACTER SET utf8", "USE `todolist`;", function (err, result) {
     if (err) {
       console.error('Database connection failed: ' + err.stack);
       return console.log("erro na criação do db");
@@ -36,7 +36,7 @@ function createDB (){
     console.log("database created!");
   });
 
-  connection.query("CREATE TABLE IF NOT EXISTS `todolist`.`login` (`id` INT NOT NULL AUTO_INCREMENT,`email` VARCHAR(45) NOT NULL, `password` VARCHAR(45) NOT NULL, PRIMARY KEY (`id`)) ENGINE = InnoDB;", function (err, result) {
+  connection.query("CREATE TABLE IF NOT EXISTS `todolist`.`login` (`id` INTEGER AUTO_INCREMENT, `email` VARCHAR(45) NOT NULL, `password` VARCHAR(45) NOT NULL, PRIMARY KEY (`id`), UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE, UNIQUE INDEX `email_UNIQUE` (`email` ASC) VISIBLE) ENGINE = InnoDB;", function (err, result) {
       if (err) {
         console.error('Database connection failed: ' + err.stack);
         return console.log("erro na criação da tabela");
@@ -44,7 +44,7 @@ function createDB (){
       console.log("tabela login created!");
   });
 
-  connection.query("CREATE TABLE IF NOT EXISTS `todolist`.`list` ( `id` INT NOT NULL, `idLogin` INT NOT NULL, `title` VARCHAR(45) NOT NULL, `status` INT NOT NULL DEFAULT 0, PRIMARY KEY (`id`, `idLogin`), INDEX `fk_table1_1_idx` (`idLogin` ASC) VISIBLE, UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE, CONSTRAINT `fk_table1_1` FOREIGN KEY (`idLogin`) REFERENCES `todolist`.`login` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION) ENGINE = InnoDB;", function (err, result) {
+  connection.query("CREATE TABLE IF NOT EXISTS `todolist`.`list` ( `id` INT AUTO_INCREMENT,  `idLogin` INT NOT NULL, `title` VARCHAR(45) NOT NULL, `status` INT NOT NULL DEFAULT 0, PRIMARY KEY (`id`, `idLogin`), INDEX `fk_table1_1_idx` (`idLogin` ASC) VISIBLE, UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE, CONSTRAINT `fk_table1_1` FOREIGN KEY (`idLogin`) REFERENCES `todolist`.`login` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION) ENGINE = InnoDB;", function (err, result) {
     if (err) {
       console.error('Database connection failed: ' + err.stack);
       return console.log("erro na criação da tabela");
@@ -57,35 +57,44 @@ function createDB (){
 
 function addLogin (email, password){
 
-  connection.query(`INSERT INTO login (email, password) VALUES ('${email}', '${password}');`, function (err, result) {
+  connection.connect(function(err) {
+    if (err) {
+      console.error(`Database connection failed:${err.stack}`);
+      return console.log("erro na conexão");
+    }
+  });
+
+  // await connection.query(`INSERT INTO login (email, password) VALUES ('${email}', '${password}');`, function (err, result) {
+    connection.query("INSERT INTO todolist.login (email, password) VALUES('user2', 'senha');", function (err, result) {
     if (err) {
       console.error('Database insertion in login is failed: ' + err.stack);
-      return;
+      return console.log("erro ao inserir login");
     }
     console.log("inseriu em login");
-  }).end();
+  });
 }
 
 function findPassWithLogin (email){
  
   // connection.query(`SELECT email FROM login WHERE email='${email}';`, function (err, result) {
-  const teste = connection.query(`SELECT email FROM login; `, function (err, result) {
+  const teste = connection.query("SELECT * FROM todolist.login; ", function (err, result) {
     if (err) {
       console.error('Database insertion in login is failed: ' + err.stack);
       return;
     }
     console.log("buscou login");
     console.log(result);
-  }).end();
+  });
 
-  console.log(teste);
+  // console.log(teste);
 
 }
 
 // reestartTables();
-// createDB();
+createDB();
 // addLogin('bruno','brunobruno');
-// findPassWithLogin('bruno');
+// findPassWithLogin('user');
+
 
 
 //##########################################
