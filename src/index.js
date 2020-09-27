@@ -7,7 +7,7 @@ const app = express();
 
 app.use(express.json());
 
-async function reestartTables (){
+function reestartTables (){
   
   connection.connect(function(err) {
     if (err) {
@@ -55,9 +55,9 @@ function createDB (){
   connection.end();
 }
 
-async function addLogin (email, password){
+function addLogin (email, password){
 
-  await connection.connect(function(err) {
+  connection.connect(function(err) {
     if (err) {
       console.error(`Database connection failed:${err.stack}`);
       return console.log("erro na conexão");
@@ -65,35 +65,36 @@ async function addLogin (email, password){
   });
 
   // await connection.query(`INSERT INTO login (email, password) VALUES ('${email}', '${password}');`, function (err, result) {
-    await connection.query(`INSERT INTO todolist.login (email, password) VALUES('user1', 'senha');`, function (err, result) {
+    connection.query("INSERT INTO todolist.login (email, password) VALUES('user2', 'senha');", function (err, result) {
     if (err) {
       console.error('Database insertion in login is failed: ' + err.stack);
-      return;
+      return console.log("erro ao inserir login");
     }
     console.log("inseriu em login");
-  }).end();
+  });
 }
 
 function findPassWithLogin (email){
  
   // connection.query(`SELECT email FROM login WHERE email='${email}';`, function (err, result) {
-  const teste = connection.query(`SELECT email FROM login; `, function (err, result) {
+  const teste = connection.query("SELECT * FROM todolist.login; ", function (err, result) {
     if (err) {
       console.error('Database insertion in login is failed: ' + err.stack);
       return;
     }
     console.log("buscou login");
     console.log(result);
-  }).end();
+  });
 
-  console.log(teste);
+  // console.log(teste);
 
 }
 
 // reestartTables();
-// createDB();
-addLogin('bruno','brunobruno');
+createDB();
+// addLogin('bruno','brunobruno');
 // findPassWithLogin('user');
+
 
 
 //##########################################
