@@ -74,6 +74,59 @@ function addLogin (email, password){
   });
 }
 
+function removeLogin(id){
+  connection.connect(function(err) {
+    if (err) {
+      console.error(`Database connection failed:${err.stack}`);
+      return console.log("erro na conexão");
+    }
+  });
+
+  connection.query("DELETE FROM todolist.login WHERE id = 1;", function(err, result){
+    if (err){
+      return console.error("Erro ao remover login");
+    }
+    console.log("login removido!");
+    
+  } )
+}
+
+function listLogin(){
+  connection.connect(function(err) {
+    if (err) {
+      console.error(`Database connection failed:${err.stack}`);
+      return console.log("erro na conexão");
+    }
+  });
+
+  connection.query("SELECT * FROM todolist.login ;", function(err, result){
+    if (err){
+      return console.error("Erro ao logins não encontrados");
+    }
+    console.log(result);
+  } )
+}
+
+function updateLogin(id, email, senha){
+  connection.connect(function(err) {
+    if (err) {
+      console.error(`Database connection failed:${err.stack}`);
+      return console.log("erro na conexão");
+    }
+  });
+
+  connection.query("UPDATE todolist.login SET email='novoEmail', senha='novaSenha' WHERE id=2 ;", function(err, result){
+    if (err){
+      return console.error("Erro ao atualizar login");
+    }
+    console.log("login atualizado!");
+    console.log(result);
+  } )
+}
+
+
+
+
 function findPassWithLogin (email){
  
   // connection.query(`SELECT email FROM login WHERE email='${email}';`, function (err, result) {
@@ -90,12 +143,87 @@ function findPassWithLogin (email){
 
 }
 
+
+// ------ FUNÇÕES DE TODO
+
+function addTodo(idLogin, title, status){
+  connection.connect(function(err) {
+    if (err) {
+      console.error(`Database connection failed:${err.stack}`);
+      return console.log("erro na conexão");
+    }
+  });
+
+  connection.query("INSERT INTO todolist.list (idLogin, title, status) VALUES ("+ idLogin +", "+ title +", "+ status +");", function(err, result){
+    if (err){
+      return console.error("Erro ao adicionar todo");
+    }
+    console.log("todo inserido!");
+    
+  } )
+}
+
+function removeTodo(idTodo){
+  connection.connect(function(err) {
+    if (err) {
+      console.error(`Database connection failed:${err.stack}`);
+      return console.log("erro na conexão");
+    }
+  });
+
+  connection.query("DELETE FROM todolist.list WHERE id = 1;", function(err, result){
+    if (err){
+      return console.error("Erro ao remover todo");
+    }
+    console.log("todo removido!");
+    
+  } )
+}
+
+function listTodo(){
+  connection.connect(function(err) {
+    if (err) {
+      console.error(`Database connection failed:${err.stack}`);
+      return console.log("erro na conexão");
+    }
+  });
+
+  connection.query("SELECT * FROM todolist.list ;", function(err, result){
+    if (err){
+      return console.error("Erro ao remover todo");
+    }
+    console.log("todo removido!");
+    console.log(result);
+  } )
+}
+
+
+function updateTodo(id, title, status){
+  connection.connect(function(err) {
+    if (err) {
+      console.error(`Database connection failed:${err.stack}`);
+      return console.log("erro na conexão");
+    }
+  });
+
+  connection.query("UPDATE todolist.list SET title='atualizar', status=3 WHERE id=2 ;", function(err, result){
+    if (err){
+      return console.error("Erro ao atualizar todo");
+    }
+    console.log("todo atualizado!");
+    console.log(result);
+  } )
+}
+
 // reestartTables();
-createDB();
-// addLogin('bruno','brunobruno');
+// createDB();
+// addLogin('jorder','redroj');
 // findPassWithLogin('user');
 
-
+addTodo(1, 'apagar', 2);
+// removeTodo(1);
+// listTodo();
+// updateTodo(2, 'atualizar', 8);
 
 //##########################################
 
@@ -103,7 +231,7 @@ app.get('/teste', (request, response)=>{
   return response.json({ok:true});
 });
 
-
+ 
 
 // app.get('/login', (request, response)=>{
 //   //array  
@@ -121,15 +249,15 @@ app.get('/teste', (request, response)=>{
 
 
 
-// app.delete('/login', (request, response)=>{
-//   const { email , password} = request.body;
-//     const passwordCheck = findPassWithLogin(email);
-//     if (passwordCheck === password){
-//       // removeLogin(email);
-//       return response.json({ message: "Cadastrado removido com sucesso!"});
-//     }
-//     return response.json({message: "Senha incorreta!"})
-// });
+app.delete('/login', (request, response)=>{
+  const { email , password} = request.body;
+    const passwordCheck = findPassWithLogin(email);
+    if (passwordCheck === password){
+      removeLogin(email);
+      return response.json({ message: "Cadastrado removido com sucesso!"});
+    }
+    return response.json({message: "Senha incorreta!"})
+});
 
 
 

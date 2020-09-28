@@ -8,6 +8,10 @@ const connection = mysql.createConnection({
   user     : process.env.RDS_USERNAME,
   password : process.env.RDS_PASSWORD,
   port     : process.env.RDS_PORT
+  // host     : 'database-2.cxvae5qbad5d.us-east-1.rds.amazonaws.com',
+  // user     : 'ubuntu',
+  // password : '',
+  // port     : 3306
 });
 
 module.exports = connection;
