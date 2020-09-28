@@ -153,8 +153,10 @@ function addTodo(idLogin, title, status){
       return console.log("erro na conexão");
     }
   });
-
-  connection.query("INSERT INTO todolist.list (idLogin, title, status) VALUES ("+ idLogin +", "+ title +", "+ status +");", function(err, result){
+  let stringSQL = 
+  "INSERT INTO todolist.list (idLogin, title, status) VALUES ("+idLogin+","+title+","+status+");";
+  //connection.query(`INSERT INTO todolist.list (idLogin, title, status) VALUES (${idLogin},${title},${status});`, function(err, result){
+  connection.query(stringSQL, function(err, result){  
     if (err){
       return console.error("Erro ao adicionar todo");
     }
@@ -220,7 +222,7 @@ function updateTodo(id, title, status){
 // addLogin('jorder','redroj');
 // findPassWithLogin('user');
 
-addTodo(1, 'apagar', 2);
+addTodo(1, "non", 2);
 // removeTodo(1);
 // listTodo();
 // updateTodo(2, 'atualizar', 8);
