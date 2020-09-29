@@ -64,8 +64,8 @@ function addLogin (email, password){
     }
   });
 
-  // await connection.query(`INSERT INTO login (email, password) VALUES ('${email}', '${password}');`, function (err, result) {
-    connection.query("INSERT INTO todolist.login (email, password) VALUES('user2', 'senha');", function (err, result) {
+  connection.query(`INSERT INTO todolist.login (email, password) VALUES ('${email}', '${password}');`, function (err, result) {
+    // connection.query("INSERT INTO todolist.login (email, password) VALUES('user2', 'senha');", function (err, result) {
     if (err) {
       console.error('Database insertion in login is failed: ' + err.stack);
       return console.log("erro ao inserir login");
@@ -74,7 +74,7 @@ function addLogin (email, password){
   });
 }
 
-function removeLogin(id){
+async function removeLogin(email,password){
   connection.connect(function(err) {
     if (err) {
       console.error(`Database connection failed:${err.stack}`);
@@ -82,13 +82,19 @@ function removeLogin(id){
     }
   });
 
-  connection.query("DELETE FROM todolist.login WHERE id = 1;", function(err, result){
+  
+
+
+  await connection.query(`DELETE FROM todolist.login WHERE id = '${result[0].id}';`, function(err, result){
     if (err){
       return console.error("Erro ao remover login");
     }
     console.log("login removido!");
-    
-  } )
+  })
+
+  
+  
+  
 }
 
 function listLogin(){
@@ -124,23 +130,27 @@ function updateLogin(id, email, senha){
   } )
 }
 
+function findIdWithLogin (email, callback){
 
-
-
-function findPassWithLogin (email){
- 
-  // connection.query(`SELECT email FROM login WHERE email='${email}';`, function (err, result) {
-  const teste = connection.query("SELECT * FROM todolist.login; ", function (err, result) {
+  connection.connect(function(err) {
     if (err) {
-      console.error('Database insertion in login is failed: ' + err.stack);
-      return;
+      console.error(`Database connection failed:${err.stack}`);
+      return console.log("erro na conexão");
     }
-    console.log("buscou login");
-    console.log(result);
   });
 
-  // console.log(teste);
 
+  connection.query(`SELECT * FROM todolist.login WHERE email = '${email}';`, function(err, result){
+    if (err){
+      return console.error("Erro ao encontrar login");
+      // callback(err, null);
+    }
+
+    // console.log(result[0].id);
+    return callback(result[0].id);
+    // console.log(result);
+    // return result[0].id;
+  })
 }
 
 
@@ -199,7 +209,6 @@ function listTodo(){
   } )
 }
 
-
 function updateTodo(id, title, status){
   connection.connect(function(err) {
     if (err) {
@@ -220,9 +229,21 @@ function updateTodo(id, title, status){
 // reestartTables();
 // createDB();
 // addLogin('jorder','redroj');
-// findPassWithLogin('user');
+// removeLogin('user2', 'senha');
 
-addTodo(1, "non", 2);
+
+
+var id; 
+findIdWithLogin('user2', function(content) {
+    id = content;
+    // return (content);
+    console.log(content); //correct value
+});
+
+
+console.log(`#### ${id}`)
+
+// addTodo(1, "non", 2);
 // removeTodo(1);
 // listTodo();
 // updateTodo(2, 'atualizar', 8);
@@ -260,6 +281,8 @@ app.delete('/login', (request, response)=>{
     }
     return response.json({message: "Senha incorreta!"})
 });
+
+
 
 
 
